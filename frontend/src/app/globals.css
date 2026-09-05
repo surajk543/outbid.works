@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  --background: #fdfbf3;
+  --foreground: #171512;
+  --muted: #6f6a63;
+  --border: #e6e0d2;
+  --card: #ffffff;
+  --accent: #e2673f;
+  --accent-soft: #fbe7df;
+  --success: #3aae49;
+  --chip: #f0ece1;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-chip: var(--chip);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --background: #121110;
+    --foreground: #f2eee6;
+    --muted: #9b948a;
+    --border: #2c2823;
+    --card: #1a1815;
+    --accent: #ef7d55;
+    --accent-soft: #33211a;
+    --success: #55c765;
+    --chip: #232019;
+  }
+}
+
+:root[data-theme="dark"] {
+  --background: #121110;
+  --foreground: #f2eee6;
+  --muted: #9b948a;
+  --border: #2c2823;
+  --card: #1a1815;
+  --accent: #ef7d55;
+  --accent-soft: #33211a;
+  --success: #55c765;
+  --chip: #232019;
+}
+
+/* Theme toggle icon: moon while light, sun while dark. Pure CSS so the
+   button needs no client state and cannot hydrate with the wrong icon. */
+.icon-sun {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .icon-moon {
+    display: none;
+  }
+  :root:not([data-theme="light"]) .icon-sun {
+    display: block;
+  }
+}
+
+:root[data-theme="dark"] .icon-moon {
+  display: none;
+}
+
+:root[data-theme="dark"] .icon-sun {
+  display: block;
+}
+
+:root[data-theme="light"] .icon-moon {
+  display: block;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
