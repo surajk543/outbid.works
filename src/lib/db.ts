@@ -9,7 +9,20 @@ import { createClient, type Client } from "@libsql/client";
  * via TURSO_DATABASE_URL / TURSO_AUTH_TOKEN.
  */
 function open(): Client {
-  const url = process.env.TURSO_DATABASE_URL ?? "file:data/outbid.db";
+  const configured = process.env.TURSO_DATABASE_URL;
+
+  // Falling back to a file on a serverless host fails deep inside libSQL with
+  // an unhelpful EROFS. Say what is actually wrong instead.
+  if (!configured && process.env.VERCEL) {
+    throw new Error(
+      "TURSO_DATABASE_URL is not set. Vercel's filesystem is read-only and " +
+        "ephemeral, so the SQLite file fallback cannot work there. Create a " +
+        "Turso database and set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in " +
+        "the project's environment variables. See the README.",
+    );
+  }
+
+  const url = configured ?? "file:data/outbid.db";
 
   // libSQL opens a file database but will not create the directory holding
   // it, so a fresh clone fails with SQLITE_CANTOPEN without this.
@@ -30,11 +43,25 @@ const globalForDb = globalThis as typeof globalThis & {
   schemaReady?: Promise<void>;
 };
 
-export const db = globalForDb.libsql ?? open();
-
-if (process.env.NODE_ENV !== "production") {
-  globalForDb.libsql = db;
+function client(): Client {
+  globalForDb.libsql ??= open();
+  return globalForDb.libsql;
 }
+
+/**
+ * Connects on first use rather than on import. Next evaluates every route
+ * module while collecting build configuration, and connecting there would make
+ * a missing TURSO_DATABASE_URL fail the build instead of the request that
+ * actually needs a database.
+ */
+export const db = new Proxy({} as Client, {
+  get(_target, property) {
+    const connection = client();
+    const value = Reflect.get(connection, property);
+    // Methods must keep the real client as their receiver, not the proxy.
+    return typeof value === "function" ? value.bind(connection) : value;
+  },
+});
 
 // "rank" is a reserved word in SQLite (window functions), so every reference
 // to the column stays double-quoted.
