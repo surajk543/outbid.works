@@ -44,7 +44,6 @@ is overridable by environment variable:
 | --- | --- |
 | `SERVER_PORT` | `8080` |
 | `DATABASE_URL` | `jdbc:postgresql://127.0.0.1:5432/outbid` |
-| `DATABASE_USER` / `DATABASE_PASSWORD` | `postgres` / `postgres` |
 | `CORS_ALLOWED_ORIGINS` | `http://localhost:3000` |
 
 Hibernate does not generate schema — create tables yourself, or add a
