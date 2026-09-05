@@ -45,13 +45,15 @@ is overridable by environment variable:
 | `SERVER_PORT` | `8080` |
 | `DATABASE_URL` | `jdbc:postgresql://127.0.0.1:5432/outbid` |
 | `DATABASE_USER` / `DATABASE_PASSWORD` | `postgres` / `postgres` |
-| `JPA_DDL_AUTO` | `update` |
-| `ADMIN_USER` / `ADMIN_PASSWORD` | `admin` / `admin` |
 | `CORS_ALLOWED_ORIGINS` | `http://localhost:3000` |
 
-Security: stateless, HTTP Basic. `GET /api/**` is public; every other method
-requires authentication. The admin credentials above are dev-only — override
-them in any shared environment.
+Hibernate does not generate schema — create tables yourself, or add a
+migration tool (Flyway/Liquibase).
+
+Security: stateless, HTTP Basic. `/`, `/health` and `GET /api/**` are public;
+every other method requires authentication. No user is configured, so Spring
+Boot generates a random password for the `user` account and prints it at
+startup.
 
 ## Frontend
 
