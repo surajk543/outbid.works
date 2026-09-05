@@ -1,18 +1,6 @@
 {
-  // The Java project lives in backend/, not at the repo root.
-  "java.import.maven.enabled": true,
-  "java.configuration.updateBuildConfiguration": "automatic",
-  "java.debug.settings.hotCodeReplace": "auto",
-  "java.jdt.ls.java.home": "/Users/suraj.kum/Library/Java/JavaVirtualMachines/ms-21.0.11/Contents/Home",
-  "java.configuration.runtimes": [
-    {
-      "name": "JavaSE-21",
-      "path": "/Users/suraj.kum/Library/Java/JavaVirtualMachines/ms-21.0.11/Contents/Home",
-      "default": true
-    }
-  ],
   "files.exclude": {
-    "**/target": true,
+    "**/dist": true,
     "**/.next": true
   }
 }

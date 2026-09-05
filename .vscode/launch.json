@@ -2,13 +2,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "java",
+      "type": "node-terminal",
       "name": "Backend",
       "request": "launch",
-      "mainClass": "works.outbid.backend.BackendApplication",
-      "projectName": "backend",
-      "cwd": "${workspaceFolder}/backend",
-      "console": "integratedTerminal"
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}/backend"
     },
     {
       "type": "node-terminal",
