@@ -1,12 +1,16 @@
 # outbid.works
 
-Monorepo. Two independent apps.
+One Next.js app. UI and API live in the same project.
 
 ```
 .
-├── frontend/   Next.js 16 · TypeScript · Tailwind 4
-└── backend/    Node.js · TypeScript · Express 5 · SQLite
+├── src/app/          pages and API route handlers
+├── src/components/   shared UI
+├── src/lib/          SQLite connection and config
+└── data/            SQLite file, created on first run (gitignored)
 ```
+
+Next.js 16 · TypeScript · Tailwind 4 · SQLite (better-sqlite3)
 
 ## Prerequisites
 
@@ -14,55 +18,39 @@ Monorepo. Two independent apps.
 
 No database server to install — SQLite is a file, created on first run.
 
-## Backend
+## Run
 
 ```bash
-cd backend
 npm install
 npm run dev
 ```
 
-Runs on http://localhost:8080. Smoke test:
+Runs on http://localhost:3000. Smoke test:
 
 ```bash
-curl http://localhost:8080/health
+curl http://localhost:3000/api/health
 ```
 
 | Route | Response |
 | --- | --- |
-| `GET /` | `ok` |
-| `GET /health` | `{"status":"up","database":"up","time":...}` |
-| `GET /api/health` | same as `/health` |
+| `GET /api/health` | `{"status":"up","database":"up","time":...}` |
 
 Returns 503 if the SQLite file can't be read.
 
-### Configuration
-
-Every value is an environment variable with a default:
+## Configuration
 
 | Variable | Default |
 | --- | --- |
-| `PORT` | `8080` |
 | `DATABASE_FILE` | `data/outbid.db` (use `:memory:` for a throwaway DB) |
-| `CORS_ALLOWED_ORIGINS` | `http://localhost:3000` (comma-separated) |
 
 The database file and its WAL sidecars are gitignored.
 
-### Scripts
+## Scripts
 
 | Command | What it does |
 | --- | --- |
-| `npm run dev` | tsx watch, restarts on change |
-| `npm run build` | compiles to `dist/` |
-| `npm start` | runs `dist/index.js` |
+| `npm run dev` | Next dev server with hot reload |
+| `npm run build` | production build |
+| `npm start` | serves the build |
+| `npm run lint` | ESLint |
 | `npm run typecheck` | `tsc --noEmit` |
-
-## Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Runs on http://localhost:3000.
