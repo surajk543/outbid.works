@@ -1,55 +1,122 @@
 # outbid.works
 
-One Next.js app. UI and API live in the same project.
+A video leaderboard ranked by one number: what you paid to be on it.
+
+New creators lose to recommendation algorithms because they have none of the
+signals those algorithms rank on — watch time, subscribers, a back catalogue.
+This replaces all of it with a bid. $5 puts you on the board; the highest bid
+is #1. Every card shows its click-through count, so a creator can see what the
+money actually bought.
+
+Mechanic borrowed from [outbid.lol](https://outbid.lol/), pointed at creators
+instead of charities.
 
 ```
 .
-├── src/app/          pages and API route handlers
-├── src/components/   shared UI
-├── src/lib/          SQLite connection and config
-└── data/            SQLite file, created on first run (gitignored)
+├── src/app/          pages, API routes, click-tracking redirect
+├── src/components/   board, cards, bid form
+└── src/lib/          database, queries, video-URL validation
 ```
 
-Next.js 16 · TypeScript · Tailwind 4 · SQLite (better-sqlite3)
+Next.js 16 · TypeScript · Tailwind 4 · SQLite via libSQL
 
-## Prerequisites
-
-- Node 22+
-
-No database server to install — SQLite is a file, created on first run.
-
-## Run
+## Run locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-Runs on http://localhost:3000. Smoke test:
+http://localhost:3000. No setup — it creates `data/outbid.db` on first request.
+
+## Data model
+
+One table, `metadata`:
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `id` | INTEGER | primary key |
+| `url` | TEXT | normalised video URL, unique per entry |
+| `title` | TEXT | required, ≤120 chars |
+| `description` | TEXT | optional, ≤280 chars |
+| `category` | TEXT | one of the ids in `src/lib/categories.ts` |
+| `amount_in_usd` | REAL | the bid: whole dollars, $10–$999,999 |
+| `clicks` | INTEGER | incremented by `/go/[id]` |
+| `rank` | INTEGER | recomputed on every bid |
+| `created_at` | TEXT | `datetime('now')` |
+
+`rank` is a reserved word in SQLite, so it stays double-quoted in queries.
+
+### The money rules
+
+Enforced in `src/lib/bidding.ts` and checked server-side on every bid:
+
+- Whole US dollars, $10 minimum, $999,999 maximum.
+- Taking #1 costs at least $5 more than the current #1. Bidding above the
+  leader but under that step is rejected, so the top spot cannot be sniped a
+  dollar at a time. Bidding at or below the leader is fine — it just lands
+  lower.
+- Equal amounts keep placement order: the older listing holds the higher rank.
+- Raising a listing you already hold costs at least $1 more than its current
+  amount.
+
+### Video URLs only
+
+Submissions are parsed before they are stored. YouTube, Vimeo, TikTok, Twitch,
+Dailymotion, Streamable, and direct video files (`.mp4`, `.webm`, `.mov`,
+`.m4v`, `.ogv`, `.m3u8`) are accepted; anything else is rejected with a 400.
+URLs are normalised, so `youtu.be/X`, `youtube.com/shorts/X`, and
+`youtube.com/watch?v=X&t=42s` all resolve to the same entry — which is what
+makes re-bidding raise your existing bid instead of duplicating it.
+
+## API
+
+| Route | What it does |
+| --- | --- |
+| `GET /api/entries` | Ranked board. Optional `?category=` and `?limit=`. |
+| `POST /api/entries` | Places a bid. 400 with `{error, field}` on invalid input. |
+| `GET /go/[id]` | Counts a click, then 302s to the video. |
+| `GET /api/health` | `{"status":"up","database":"up",...}`, 503 if the DB is unreachable. |
 
 ```bash
-curl http://localhost:3000/api/health
+curl -X POST http://localhost:3000/api/entries \
+  -H 'Content-Type: application/json' \
+  -d '{"url":"https://youtu.be/dQw4w9WgXcQ","title":"My short film","category":"film","amount_in_usd":20}'
 ```
 
-| Route | Response |
+## Deploying to Vercel
+
+Vercel's filesystem is ephemeral and read-only, so the local SQLite file cannot
+come with you — writes would vanish on the next cold start. Point it at
+[Turso](https://turso.tech), which serves the same SQLite over the network:
+
+```bash
+turso db create outbid
+turso db show outbid --url        # → libsql://...
+turso db tokens create outbid     # → the auth token
+```
+
+Set both in the Vercel project (Settings → Environment Variables), then deploy:
+
+| Variable | Value |
 | --- | --- |
-| `GET /api/health` | `{"status":"up","database":"up","time":...}` |
+| `TURSO_DATABASE_URL` | `libsql://outbid-<org>.turso.io` |
+| `TURSO_AUTH_TOKEN` | the token from the command above |
 
-Returns 503 if the SQLite file can't be read.
+The table is created on first request, so there is no migration step. With
+neither variable set the app falls back to `file:data/outbid.db`, which is why
+local dev needs no configuration.
 
-## Configuration
+## Not built yet
 
-| Variable | Default |
-| --- | --- |
-| `DATABASE_FILE` | `data/outbid.db` (use `:memory:` for a throwaway DB) |
-
-The database file and its WAL sidecars are gitignored.
+Checkout. Bids are stored and ranked, but no payment is taken and no card
+details are collected anywhere.
 
 ## Scripts
 
 | Command | What it does |
 | --- | --- |
-| `npm run dev` | Next dev server with hot reload |
+| `npm run dev` | dev server with hot reload |
 | `npm run build` | production build |
 | `npm start` | serves the build |
 | `npm run lint` | ESLint |

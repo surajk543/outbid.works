@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import "./globals.css";
 
@@ -14,7 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "outbid.works",
+  title: "outbid.works — buy your way onto the leaderboard",
+  description:
+    "A video leaderboard ranked by one number: what you paid to be on it. New creators bid from $5 to get their work in front of people.",
 };
 
 // Applies the stored theme before first paint so the page doesn't flash.
@@ -35,6 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col">
         <SiteNav />
         {children}
+        <SiteFooter />
       </body>
     </html>
   );

@@ -5,10 +5,10 @@ import { pingDatabase } from "@/lib/db";
 // Health reflects live state, so it must never be cached or prerendered.
 export const dynamic = "force-dynamic";
 
-export function GET() {
+export async function GET() {
   let database: "up" | "down" = "down";
   try {
-    database = pingDatabase() ? "up" : "down";
+    database = (await pingDatabase()) ? "up" : "down";
   } catch {
     database = "down";
   }
