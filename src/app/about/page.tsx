@@ -33,20 +33,6 @@ export default function Page() {
           You can see exactly what the money bought, and decide whether the next
           one is worth it.
         </p>
-
-        <p className="text-muted">
-          The mechanic is lifted from{" "}
-          <a
-            href="https://outbid.lol/"
-            target="_blank"
-            rel="noreferrer noopener"
-            className="text-accent underline underline-offset-4"
-          >
-            outbid.lol
-          </a>
-          , which auctions a leaderboard for charity. This one points it at
-          creators who need eyes on their work.
-        </p>
       </div>
 
       <div className="mt-10 rounded-2xl border border-border bg-card p-6">
