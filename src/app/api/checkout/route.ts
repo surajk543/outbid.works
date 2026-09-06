@@ -75,6 +75,26 @@ export async function POST(request: Request) {
     return NextResponse.json({ checkout_url: session.checkout_url });
   } catch (error) {
     console.error("dodo checkout failed", error);
+
+    // Dodo refuses live sessions until the business is verified. That is a
+    // dashboard problem, not a retry problem, so say which one it is instead
+    // of asking the bidder to try again forever.
+    const code =
+      typeof error === "object" && error && "error" in error
+        ? String((error as { error?: { code?: string } }).error?.code ?? "")
+        : "";
+
+    if (code === "MERCHANT_NOT_LIVE") {
+      return NextResponse.json(
+        {
+          error:
+            "Payments are not switched on yet, so bids cannot be taken. Nothing was charged.",
+          field: "amount_in_usd",
+        },
+        { status: 503 },
+      );
+    }
+
     return NextResponse.json(
       { error: "Could not reach the payment provider. Try again." },
       { status: 502 },
