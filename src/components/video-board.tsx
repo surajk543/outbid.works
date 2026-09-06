@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { CategoryIcon } from "./category-icon";
-import { VideoCard } from "./video-card";
+import { VideoRow } from "./video-row";
 import { categories } from "@/lib/categories";
 import type { Entry } from "@/lib/entries";
 
@@ -67,11 +67,11 @@ export function VideoBoard({
         </div>
       ) : null}
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <ol className="overflow-hidden rounded-2xl border border-border bg-card">
         {visible.map((entry) => (
-          <VideoCard key={entry.id} entry={entry} />
+          <VideoRow key={entry.id} entry={entry} />
         ))}
-      </div>
+      </ol>
     </section>
   );
 }

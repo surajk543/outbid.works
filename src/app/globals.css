@@ -12,6 +12,14 @@
   --accent-soft: #fbe7df;
   --success: #3aae49;
   --chip: #f0ece1;
+
+  /* Podium. Warm metal tones that still hit contrast on the page ground. */
+  --gold: #a67c0a;
+  --gold-soft: #fbf3dd;
+  --silver: #6b7480;
+  --silver-soft: #eff1f4;
+  --bronze: #a1592f;
+  --bronze-soft: #fbeee5;
 }
 
 @theme inline {
@@ -24,6 +32,12 @@
   --color-accent-soft: var(--accent-soft);
   --color-success: var(--success);
   --color-chip: var(--chip);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-silver: var(--silver);
+  --color-silver-soft: var(--silver-soft);
+  --color-bronze: var(--bronze);
+  --color-bronze-soft: var(--bronze-soft);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -39,6 +53,12 @@
     --accent-soft: #33211a;
     --success: #55c765;
     --chip: #232019;
+    --gold: #e0b64a;
+    --gold-soft: #2c2415;
+    --silver: #b0b8c4;
+    --silver-soft: #22252a;
+    --bronze: #cf8a5c;
+    --bronze-soft: #2b1e17;
   }
 }
 
@@ -52,6 +72,12 @@
   --accent-soft: #33211a;
   --success: #55c765;
   --chip: #232019;
+  --gold: #e0b64a;
+  --gold-soft: #2c2415;
+  --silver: #b0b8c4;
+  --silver-soft: #22252a;
+  --bronze: #cf8a5c;
+  --bronze-soft: #2b1e17;
 }
 
 /* Theme toggle icon: moon while light, sun while dark. Pure CSS so the
