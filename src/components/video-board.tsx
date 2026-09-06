@@ -5,14 +5,17 @@ import { useMemo, useState } from "react";
 import { CategoryIcon } from "./category-icon";
 import { VideoRow } from "./video-row";
 import { categories } from "@/lib/categories";
+import type { Dictionary } from "@/lib/i18n/dictionaries/en";
 import type { Entry } from "@/lib/entries";
 
 export function VideoBoard({
   entries,
   heading,
+  t,
 }: {
   entries: Entry[];
   heading?: string;
+  t: Dictionary;
 }) {
   const [filter, setFilter] = useState<string | null>(null);
 
@@ -31,10 +34,8 @@ export function VideoBoard({
   if (entries.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-border px-6 py-16 text-center">
-        <p className="text-lg font-semibold">The board is empty.</p>
-        <p className="mt-2 text-muted">
-          Be the first creator on it — any bid takes #1 right now.
-        </p>
+        <p className="text-lg font-semibold">{t.board.empty}</p>
+        <p className="mt-2 text-muted">{t.board.emptyHint}</p>
       </div>
     );
   }
@@ -52,7 +53,7 @@ export function VideoBoard({
         <div className="mb-6 flex gap-2 overflow-x-auto pb-2">
           <Chip active={filter === null} onClick={() => setFilter(null)}>
             <GridIcon />
-            All
+            {t.board.all}
           </Chip>
           {available.map((c) => (
             <Chip
@@ -61,7 +62,7 @@ export function VideoBoard({
               onClick={() => setFilter(filter === c.id ? null : c.id)}
             >
               <CategoryIcon name={c.icon} />
-              {c.label}
+              {t.categories[c.id as keyof typeof t.categories] ?? c.label}
             </Chip>
           ))}
         </div>
@@ -69,7 +70,7 @@ export function VideoBoard({
 
       <ol className="overflow-hidden rounded-2xl border border-border bg-card">
         {visible.map((entry) => (
-          <VideoRow key={entry.id} entry={entry} />
+          <VideoRow key={entry.id} entry={entry} t={t} />
         ))}
       </ol>
     </section>

@@ -4,17 +4,21 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 
 import { MAX_BID, MIN_BID, priceOfFirst } from "@/lib/bidding";
-import { categories, categoryLabel } from "@/lib/categories";
+import { categories } from "@/lib/categories";
+import { fill } from "@/lib/i18n/fill";
+import type { Dictionary } from "@/lib/i18n/dictionaries/en";
 
 type FieldError = { field: string; message: string } | null;
 
 export function BidForm({
   topBid,
   amounts,
+  t,
 }: {
   topBid: number;
   /** Every bid currently on the board, so the modal can show the rank. */
   amounts: number[];
+  t: Dictionary;
 }) {
   // Opening at the price of #1 makes the pitch concrete: this is exactly what
   // the top spot costs right now.
@@ -83,7 +87,7 @@ export function BidForm({
       window.location.href = data.checkout_url;
     } catch {
       closeConfirm();
-      setError({ field: "url", message: "Could not reach the server. Try again." });
+      setError({ field: "url", message: t.form.serverUnreachable });
     } finally {
       setPending(false);
     }
@@ -96,8 +100,8 @@ export function BidForm({
       <div className="rounded-3xl border border-border bg-card p-5 shadow-sm sm:p-6">
         <div className="space-y-4">
           <Field
-            label="Video link"
-            hint="YouTube, Vimeo, TikTok, Twitch, Dailymotion, Streamable, or an .mp4"
+            label={t.form.videoLink}
+            hint={t.form.videoLinkHint}
             invalid={invalid("url")}
           >
             <input
@@ -110,18 +114,18 @@ export function BidForm({
           </Field>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Title" invalid={invalid("title")}>
+            <Field label={t.form.title} invalid={invalid("title")}>
               <input
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 maxLength={120}
-                placeholder="What is this video?"
+                placeholder={t.form.titlePlaceholder}
                 className={inputClass(invalid("title"))}
               />
             </Field>
 
-            <Field label="Category" invalid={invalid("category")}>
+            <Field label={t.form.category} invalid={invalid("category")}>
               <select
                 required
                 value={category}
@@ -129,11 +133,11 @@ export function BidForm({
                 className={inputClass(invalid("category"))}
               >
                 <option value="" disabled>
-                  Choose a category
+                  {t.form.categoryPlaceholder}
                 </option>
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.label}
+                    {t.categories[c.id as keyof typeof t.categories] ?? c.label}
                   </option>
                 ))}
               </select>
@@ -141,15 +145,15 @@ export function BidForm({
           </div>
 
           <Field
-            label="One-line pitch"
-            hint="Optional — 280 characters"
+            label={t.form.pitch}
+            hint={t.form.pitchHint}
             invalid={invalid("description")}
           >
             <input
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               maxLength={280}
-              placeholder="Why should someone press play?"
+              placeholder={t.form.pitchPlaceholder}
               className={inputClass(invalid("description"))}
             />
           </Field>
@@ -157,10 +161,10 @@ export function BidForm({
 
         <div className="mt-5 flex flex-col gap-4 border-t border-border pt-5 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
-            <span className="text-sm font-semibold text-muted">Your bid</span>
+            <span className="text-sm font-semibold text-muted">{t.form.yourBid}</span>
             <div className="flex items-center gap-2">
               <StepButton
-                label="Lower bid"
+                label={t.form.lowerBid}
                 onClick={() => setAmount((a) => Math.max(MIN_BID, a - 1))}
                 disabled={amount <= MIN_BID}
               >
@@ -170,7 +174,7 @@ export function BidForm({
                 ${amount}
               </span>
               <StepButton
-                label="Raise bid"
+                label={t.form.raiseBid}
                 onClick={() => setAmount((a) => Math.min(MAX_BID, a + 1))}
                 disabled={amount >= MAX_BID}
               >
@@ -185,13 +189,15 @@ export function BidForm({
             aria-describedby={!complete ? "bid-incomplete" : undefined}
             className="h-13 flex-1 rounded-full bg-accent px-8 text-lg font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
           >
-            {pending ? "Starting checkout…" : `Outbid for $${amount}`}
+            {pending
+              ? t.form.startingCheckout
+              : fill(t.form.outbidFor, { amount: `$${amount}` })}
           </button>
         </div>
 
         {!complete ? (
           <p id="bid-incomplete" className="mt-3 text-center text-sm text-muted">
-            Add a video link, a title, and a category to place a bid.
+            {t.form.incomplete}
           </p>
         ) : null}
 
@@ -203,7 +209,7 @@ export function BidForm({
       </div>
 
       <p className="mt-4 text-center text-sm text-muted">
-        Already on the board? Submit the same link with a higher bid to climb.
+        {t.form.alreadyOnBoard}
       </p>
 
       <ConfirmDialog
@@ -217,6 +223,7 @@ export function BidForm({
         pending={pending}
         onCancel={closeConfirm}
         onConfirm={placeBid}
+        t={t}
       />
     </form>
   );
@@ -233,6 +240,7 @@ function ConfirmDialog({
   pending,
   onCancel,
   onConfirm,
+  t,
 }: {
   ref: React.RefObject<HTMLDialogElement | null>;
   rank: number;
@@ -244,6 +252,7 @@ function ConfirmDialog({
   pending: boolean;
   onCancel: () => void;
   onConfirm: () => void;
+  t: Dictionary;
 }) {
   return (
     <dialog
@@ -266,12 +275,12 @@ function ConfirmDialog({
       <div className="p-6">
         <div className="flex items-start justify-between gap-4">
           <h2 id="confirm-title" className="text-xl font-bold tracking-tight">
-            Confirm this rank
+            {t.modal.title}
           </h2>
           <button
             type="button"
             onClick={onCancel}
-            aria-label="Close"
+            aria-label={t.modal.close}
             className="-mr-1 -mt-1 flex size-8 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-chip hover:text-foreground"
           >
             <svg
@@ -289,43 +298,39 @@ function ConfirmDialog({
           </button>
         </div>
 
-        <p className="mt-2 text-muted">
-          Check the rank and price, then agree to the Terms of Service to
-          continue.
-        </p>
+        <p className="mt-2 text-muted">{t.modal.subtitle}</p>
 
         <div className="mt-5 flex items-start justify-between gap-4 rounded-xl bg-chip p-4">
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">
-              Rank
+              {t.modal.rank}
             </p>
             <p className="mt-0.5 font-mono text-3xl font-bold tabular-nums">
               #{rank}
             </p>
             <p className="mt-1 truncate text-sm text-muted">
-              {category ? categoryLabel(category) : "—"}
+              {category
+                ? (t.categories[category as keyof typeof t.categories] ?? category)
+                : "—"}
             </p>
           </div>
           <div className="shrink-0 text-right">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted">
-              Price
+              {t.modal.price}
             </p>
             <p className="mt-0.5 font-mono text-3xl font-bold tabular-nums text-accent">
               ${amount.toLocaleString()}
             </p>
-            <p className="mt-1 text-sm text-muted">Due now</p>
+            <p className="mt-1 text-sm text-muted">{t.modal.dueNow}</p>
           </div>
         </div>
 
         <p className="mt-4 leading-relaxed">
-          <span className="font-semibold">{title || "Your video"}</span> goes on
-          the public board at that rank. Someone else can pay more and take it.
+          <span className="font-semibold">{title || t.modal.yourVideo}</span>{" "}
+          {t.modal.goesOnBoard}
         </p>
 
-        <p className="mt-2 text-sm text-muted">
-          Payment is taken by Dodo Payments on the next screen. The listing
-          goes on the board once the payment confirms.
-        </p>
+        <p className="mt-2 text-sm text-muted">{t.modal.paymentTaken}</p>
 
         <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border border-border p-3">
           <input
@@ -335,25 +340,25 @@ function ConfirmDialog({
             className="mt-0.5 size-5 shrink-0 accent-accent"
           />
           <span className="leading-relaxed">
-            I have read and agree to the{" "}
+            {t.modal.agreeBefore}{" "}
             <Link
               href="/terms"
               target="_blank"
               className="font-semibold text-accent underline underline-offset-4"
             >
-              Terms of Service
+              {t.modal.agreeTerms}
             </Link>{" "}
-            of outbid.works
+            {t.modal.agreeAfter}
           </span>
         </label>
 
         <p className="mt-3 text-sm text-muted">
           <Link href="/privacy" target="_blank" className="underline underline-offset-4 hover:text-foreground">
-            Privacy
+            {t.nav.privacy}
           </Link>
           {" · "}
           <Link href="/rules" target="_blank" className="underline underline-offset-4 hover:text-foreground">
-            Rules
+            {t.nav.rules}
           </Link>
         </p>
       </div>
@@ -364,7 +369,7 @@ function ConfirmDialog({
           onClick={onCancel}
           className="rounded-full border border-border bg-card px-5 py-2.5 font-semibold transition-colors hover:bg-chip"
         >
-          Cancel
+          {t.modal.cancel}
         </button>
         <button
           type="button"
@@ -372,7 +377,7 @@ function ConfirmDialog({
           disabled={!agreed || pending}
           className="rounded-full bg-accent px-6 py-2.5 font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
         >
-          {pending ? "Starting checkout…" : "Continue to checkout"}
+          {pending ? t.form.startingCheckout : t.modal.continue}
         </button>
       </div>
     </dialog>

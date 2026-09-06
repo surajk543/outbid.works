@@ -3,13 +3,17 @@ import { PageShell } from "@/components/page-shell";
 import { MIN_BID } from "@/lib/bidding";
 import { categories } from "@/lib/categories";
 import { listEntries, type Entry } from "@/lib/entries";
+import { fill, getTranslations } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = { title: "Categories · outbid.works" };
 
 export default async function Page() {
-  const entries = await listEntries({ limit: 200 });
+  const [entries, { t }] = await Promise.all([
+    listEntries({ limit: 200 }),
+    getTranslations(),
+  ]);
 
   const byCategory = new Map<string, Entry[]>();
   for (const entry of entries) {
@@ -20,8 +24,8 @@ export default async function Page() {
 
   return (
     <PageShell
-      title="Categories"
-      description="Each category is its own race. A quiet one is the cheapest place to be #1."
+      title={t.categoriesPage.title}
+      description={t.categoriesPage.description}
     >
       <div className="grid gap-5 sm:grid-cols-2">
         {categories.map((category) => {
@@ -39,13 +43,18 @@ export default async function Page() {
                 <span className="text-accent">
                   <CategoryIcon name={category.icon} />
                 </span>
-                {category.label}
+                {t.categories[category.id as keyof typeof t.categories] ?? category.label}
               </h2>
 
               <p className="mt-2 text-sm text-muted">
                 {inCategory.length === 0
-                  ? "Nobody has bid here yet."
-                  : `${inCategory.length} ${inCategory.length === 1 ? "video" : "videos"} · leader at $${topBid}`}
+                  ? t.categoriesPage.nobody
+                  : fill(
+                      inCategory.length === 1
+                        ? t.categoriesPage.countOne
+                        : t.categoriesPage.count,
+                      { count: inCategory.length, amount: `$${topBid}` },
+                    )}
               </p>
 
               {leader ? (
@@ -61,7 +70,7 @@ export default async function Page() {
                 </a>
               ) : (
                 <p className="mt-4 rounded-xl border border-dashed border-border px-4 py-3 text-sm text-muted">
-                  Open — ${MIN_BID} takes the top spot.
+                  {fill(t.categoriesPage.open, { amount: `$${MIN_BID}` })}
                 </p>
               )}
             </section>

@@ -1,6 +1,8 @@
 import { CategoryIcon } from "./category-icon";
 import { VideoThumbnail } from "./video-thumbnail";
-import { categories, categoryLabel } from "@/lib/categories";
+import { categories } from "@/lib/categories";
+import { fill } from "@/lib/i18n/fill";
+import type { Dictionary } from "@/lib/i18n/dictionaries/en";
 import type { Entry } from "@/lib/entries";
 
 const PROVIDER_LABELS: Record<Entry["provider"], string> = {
@@ -57,7 +59,7 @@ function TrophyIcon() {
   );
 }
 
-export function VideoRow({ entry }: { entry: Entry }) {
+export function VideoRow({ entry, t }: { entry: Entry; t: Dictionary }) {
   const podium = PODIUM[entry.rank];
 
   return (
@@ -81,7 +83,7 @@ export function VideoRow({ entry }: { entry: Entry }) {
             <>
               <TrophyIcon />
               {/* The trophy carries the rank visually; keep it readable aloud. */}
-              <span className="sr-only">Rank {entry.rank}</span>
+              <span className="sr-only">{fill(t.board.rankLabel, { rank: entry.rank })}</span>
             </>
           ) : (
             entry.rank
@@ -105,7 +107,7 @@ export function VideoRow({ entry }: { entry: Entry }) {
           <span className="mt-1 flex items-center gap-2 text-xs text-muted">
             <span className="flex items-center gap-1.5">
               <CategoryIcon name={iconFor(entry.category)} />
-              {categoryLabel(entry.category)}
+              {t.categories[entry.category as keyof typeof t.categories] ?? entry.category}
             </span>
             <span aria-hidden="true">·</span>
             <span className="hidden sm:inline">
@@ -115,8 +117,9 @@ export function VideoRow({ entry }: { entry: Entry }) {
               ·
             </span>
             <span className="tabular-nums">
-              {entry.clicks.toLocaleString()}{" "}
-              {entry.clicks === 1 ? "click" : "clicks"}
+              {fill(entry.clicks === 1 ? t.board.click : t.board.clicks, {
+                count: entry.clicks.toLocaleString(),
+              })}
             </span>
           </span>
         </span>

@@ -1,18 +1,19 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+
+import { LanguageSwitcher } from "./language-switcher";
+import { NavLinks } from "./nav-links";
 import { ThemeToggle } from "./theme-toggle";
+import { getTranslations } from "@/lib/i18n";
 
-const links = [
-  { href: "/leaderboard", label: "Leaderboard" },
-  { href: "/categories", label: "Categories" },
-  { href: "/about", label: "About" },
-  { href: "/rules", label: "Rules" },
-] as const;
+export async function SiteNav() {
+  const { locale, t } = await getTranslations();
 
-export function SiteNav() {
-  const pathname = usePathname();
+  const links = [
+    { href: "/leaderboard", label: t.nav.leaderboard },
+    { href: "/categories", label: t.nav.categories },
+    { href: "/about", label: t.nav.about },
+    { href: "/rules", label: t.nav.rules },
+  ];
 
   return (
     <header className="border-b border-border">
@@ -24,28 +25,11 @@ export function SiteNav() {
           </span>
         </Link>
 
-        <ul className="flex items-center gap-1 text-[15px]">
-          {links.map(({ href, label }) => {
-            const active = pathname.startsWith(href);
-
-            return (
-              <li key={href}>
-                <Link
-                  href={href}
-                  aria-current={active ? "page" : undefined}
-                  className={`rounded-full px-3 py-1.5 transition-colors hover:text-foreground ${
-                    active ? "font-semibold text-foreground" : "text-muted"
-                  }`}
-                >
-                  {label}
-                </Link>
-              </li>
-            );
-          })}
-          <li className="ml-1">
-            <ThemeToggle />
-          </li>
-        </ul>
+        <div className="flex items-center gap-1 text-[15px]">
+          <NavLinks links={links} />
+          <LanguageSwitcher current={locale} label={t.nav.language} />
+          <ThemeToggle />
+        </div>
       </nav>
     </header>
   );

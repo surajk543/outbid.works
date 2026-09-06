@@ -2,16 +2,28 @@ import Link from "next/link";
 
 import { Blank, LegalItem, LegalList, LegalSection } from "@/components/legal";
 import { PageShell } from "@/components/page-shell";
+import { getTranslations } from "@/lib/i18n";
 import { CONTACT_EMAIL, CONTACT_X, CONTACT_X_URL, SITE_URL } from "@/lib/contact";
 
 export const metadata = { title: "Privacy Policy · outbid.works" };
 
-export default function Page() {
+export default async function Page() {
+  const { locale, t } = await getTranslations();
+
   return (
     <PageShell
       title="Privacy Policy"
       description="How outbid.works handles information when you visit the site, click a listing, or place a bid. It sits alongside the Terms of Service."
     >
+      {locale !== "en" ? (
+        <div className="mb-6 rounded-2xl border border-border bg-chip p-5" lang="en" dir="ltr">
+          <h2 className="font-bold">{t.legal.englishOnly}</h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted">
+            {t.legal.englishOnlyBody}
+          </p>
+        </div>
+      ) : null}
+
       <div className="rounded-2xl border border-accent bg-accent-soft p-5">
         <h2 className="font-bold text-accent">Draft — review before publishing</h2>
         <p className="mt-2 text-sm leading-relaxed">
