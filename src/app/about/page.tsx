@@ -36,11 +36,11 @@ export default function Page() {
       </div>
 
       <div className="mt-10 rounded-2xl border border-border bg-card p-6">
-        <h2 className="font-bold">Honest status</h2>
+        <h2 className="font-bold">How paying works</h2>
         <p className="mt-2 text-muted">
-          Checkout is not built. Bids are stored and ranked, but no money moves
-          and no payment details are collected. Treat the board as a working
-          demo of the mechanic.
+          Payment is taken by Dodo Payments, who act as merchant of record —
+          card details never reach this site. A listing appears once its
+          payment confirms, at whatever rank the amount earns.
         </p>
         <Link
           href="/rules"

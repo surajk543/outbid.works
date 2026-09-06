@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { createEntry, listEntries } from "@/lib/entries";
+import { listEntries } from "@/lib/entries";
 
 export const dynamic = "force-dynamic";
 
@@ -17,29 +17,8 @@ export async function GET(request: Request) {
   return NextResponse.json({ entries });
 }
 
-export async function POST(request: Request) {
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Expected a JSON body." }, { status: 400 });
-  }
-
-  const input = body as Record<string, unknown>;
-  const result = await createEntry({
-    url: String(input.url ?? ""),
-    title: String(input.title ?? ""),
-    description: input.description == null ? null : String(input.description),
-    category: String(input.category ?? ""),
-    amount_in_usd: Number(input.amount_in_usd),
-  });
-
-  if (!result.ok) {
-    return NextResponse.json(
-      { error: result.message, field: result.field },
-      { status: 400 },
-    );
-  }
-
-  return NextResponse.json({ entry: result.entry }, { status: 201 });
-}
+/**
+ * There is deliberately no POST here. A listing is created only by a confirmed
+ * payment, in the Dodo webhook — an unauthenticated write endpoint would hand
+ * out ranks for free and undercut everyone who paid for one.
+ */

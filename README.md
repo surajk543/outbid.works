@@ -73,15 +73,13 @@ makes re-bidding raise your existing bid instead of duplicating it.
 | Route | What it does |
 | --- | --- |
 | `GET /api/entries` | Ranked board. Optional `?category=` and `?limit=`. |
-| `POST /api/entries` | Places a bid. 400 with `{error, field}` on invalid input. |
-| `GET /go/[id]` | Counts a click, then 302s to the video. |
+| `POST /api/checkout` | Validates a bid and returns a Dodo `checkout_url`. 400 with `{error, field}` on invalid input. |
+| `POST /api/webhooks/dodo` | Writes the listing on a verified `payment.succeeded`. |
+| `GET /go/[id]` | Counts a click once per browser, then 302s to the video. |
 | `GET /api/health` | `{"status":"up","database":"up",...}`, 503 if the DB is unreachable. |
 
-```bash
-curl -X POST http://localhost:3000/api/entries \
-  -H 'Content-Type: application/json' \
-  -d '{"url":"https://youtu.be/dQw4w9WgXcQ","title":"My short film","category":"film","amount_in_usd":20}'
-```
+There is no public write endpoint for listings. A row is created only by a
+confirmed payment, so a bid cannot be placed without paying for it.
 
 ## Deploying to Vercel
 
@@ -106,10 +104,30 @@ The table is created on first request, so there is no migration step. With
 neither variable set the app falls back to `file:data/outbid.db`, which is why
 local dev needs no configuration.
 
-## Not built yet
+## Payments
 
-Checkout. Bids are stored and ranked, but no payment is taken and no card
-details are collected anywhere.
+Dodo Payments takes the money, as merchant of record. Bids are arbitrary
+amounts, so checkout uses a **pay-what-you-want** product with the bid passed as
+an `amount` override in cents.
+
+The listing is **not** written at checkout. `POST /api/checkout` validates the
+bid, creates a Dodo checkout session carrying the listing in `metadata`, and
+redirects the browser. `POST /api/webhooks/dodo` verifies the signature and
+writes the row on `payment.succeeded` — which is what the Terms mean by "rank is
+assigned when payment is confirmed". No pending-payment table is needed, which
+keeps the schema at one table.
+
+| Variable | Where to get it |
+| --- | --- |
+| `DODO_API_KEY` | Dodo dashboard → Developer → API keys. Needs **write** scope; a read-only key cannot create checkout sessions. |
+| `DODO_PRODUCT_ID` | A one-time product with `pay_what_you_want: true`, minimum `$1`. |
+| `DODO_WEBHOOK_SECRET` | Dodo dashboard → Webhooks, pointing at `/api/webhooks/dodo`. Starts `whsec_`. |
+| `DODO_MODE` | `test` or `live`. Defaults to `test`. |
+
+With `DODO_API_KEY` or `DODO_PRODUCT_ID` missing, `/api/checkout` returns 503
+and no bid can be placed. Webhook signatures are verified per the Standard
+Webhooks spec, with a five-minute timestamp window so a captured request cannot
+be replayed.
 
 ## Scripts
 

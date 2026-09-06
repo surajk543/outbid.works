@@ -104,9 +104,10 @@ export default function Page() {
         <h2 className="font-bold">Not built yet</h2>
         <ul className="mt-2 space-y-1.5 text-muted">
           <li>
-            <strong className="text-foreground">Checkout.</strong> Bids are
-            recorded and ranked, but no payment is taken and no card details are
-            collected anywhere on this site.
+            <strong className="text-foreground">Refunds and receipts.</strong>{" "}
+            Payment goes through Dodo Payments, but there is no self-serve way
+            to see past payments or ask for a listing to be removed — email us
+            instead.
           </li>
           <li>
             <strong className="text-foreground">Time-windowed boards.</strong>{" "}

@@ -35,8 +35,8 @@ export function SiteFooter() {
       </div>
 
       <p className="border-t border-border px-6 py-3 text-center text-xs text-muted">
-        Checkout is not live. Bids are recorded and ranked, but no payment is
-        taken and no card details are collected.
+        Payments are handled by Dodo Payments. A listing goes on the board
+        once its payment confirms.
       </p>
     </footer>
   );

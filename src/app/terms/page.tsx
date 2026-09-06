@@ -19,8 +19,7 @@ export default function Page() {
           Every highlighted blank below must be filled in before this page is
           published, and the whole document should be reviewed by a lawyer
           qualified in the governing jurisdiction. It is a starting structure,
-          not legal advice. Checkout is also not built yet, so the payment
-          clauses describe intended terms rather than a live flow.
+          not legal advice.
         </p>
       </div>
 
@@ -121,7 +120,7 @@ export default function Page() {
 
       <LegalSection title="Payments and taxes">
         <p>
-          Checkout is processed by <Blank>payment processor</Blank>. We do not
+          Checkout is processed by Dodo Payments, acting as merchant of record. We do not
           collect or store full payment-card numbers. The processor&apos;s terms
           and privacy notice also apply to the payment itself. Amounts are
           priced in US dollars. Applicable taxes may be added at checkout.

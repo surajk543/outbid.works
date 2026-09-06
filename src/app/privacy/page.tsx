@@ -16,10 +16,11 @@ export default function Page() {
         <h2 className="font-bold text-accent">Draft — review before publishing</h2>
         <p className="mt-2 text-sm leading-relaxed">
           This describes what the code actually does today, which is very
-          little: one functional cookie, no analytics, no accounts, no payments.
+          little: one functional cookie, no analytics and no accounts. Payment is
+          handled entirely by Dodo Payments.
           Every highlighted blank still needs filling, and a lawyer in the
-          governing jurisdiction should review it. Adding checkout, analytics,
-          or emails later means rewriting this page.
+          governing jurisdiction should review it. Adding analytics or email
+          later means rewriting this page.
         </p>
       </div>
 
@@ -96,6 +97,14 @@ export default function Page() {
             provider process ordinary request data — including IP address, user
             agent, and timestamps — to serve the site and keep it secure. We do
             not read those logs to build a profile of you.
+          </LegalItem>
+          <LegalItem>
+            <strong>Payments.</strong> Card details and billing identity are
+            collected by Dodo Payments, our merchant of record — they never
+            reach this site and we never store them. Dodo tells us that a
+            payment succeeded and hands back the listing details you submitted,
+            which is what puts the listing on the board. Their own privacy
+            notice governs the payment itself.
           </LegalItem>
           <LegalItem>
             <strong>Messages you send us.</strong> If you email a takedown
@@ -183,6 +192,10 @@ export default function Page() {
             <Blank>hosting provider</Blank> and{" "}
             <Blank>database provider</Blank> — so the site can run and the board
             can be stored.
+          </LegalItem>
+          <LegalItem>
+            <strong>Dodo Payments</strong> — our merchant of record, who take
+            the payment and hold the card and billing details.
           </LegalItem>
           <LegalItem>
             <strong>Professional advisers, authorities, or a buyer</strong> of

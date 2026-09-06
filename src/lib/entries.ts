@@ -119,17 +119,24 @@ export type CreateInput = {
   amount_in_usd: number;
 };
 
-/** Field-level failures, so the form can point at the input that was wrong. */
-export type CreateResult =
-  | { ok: true; entry: Entry }
+/** A submission that passed every rule, ready to be written or paid for. */
+export type CheckedBid = {
+  url: string;
+  title: string;
+  description: string | null;
+  category: string;
+  amount: number;
+};
+
+export type Validation =
+  | { ok: true; bid: CheckedBid }
   | { ok: false; field: keyof CreateInput; message: string };
 
 /**
- * Creates an entry, or raises the bid on one that already exists for the same
- * video. Re-bidding is how a creator climbs the board, so a repeat URL is an
- * update rather than a duplicate row.
+ * Every rule, without writing anything. Checkout runs this before sending
+ * anyone to pay, so a bid that would be rejected never reaches a card form.
  */
-export async function createEntry(input: CreateInput): Promise<CreateResult> {
+export async function validateBid(input: CreateInput): Promise<Validation> {
   await ready();
 
   const video = parseVideoUrl(input.url ?? "");
@@ -215,18 +222,56 @@ export async function createEntry(input: CreateInput): Promise<CreateResult> {
         message: `This video is on the board at $${current}. Raising it costs at least $${current + RAISE_STEP}.`,
       };
     }
+  }
 
+  return {
+    ok: true,
+    bid: {
+      url: video.url,
+      title,
+      description: description || null,
+      category: input.category,
+      amount,
+    },
+  };
+}
+
+/**
+ * Writes the listing and re-ranks the board. Takes an already-checked bid, so
+ * it cannot reject — which is what the paid path needs, since by the time this
+ * runs the money is gone and refusing would take payment for nothing.
+ *
+ * An existing listing keeps the larger of the two amounts. Between checkout
+ * and confirmation the same video may have been raised by another payment, and
+ * lowering it here would quietly discard what that one bought.
+ */
+export async function writeBid(bid: CheckedBid): Promise<Entry> {
+  await ready();
+
+  const existing = await db.execute({
+    sql: "SELECT id, amount_in_usd FROM metadata WHERE url = ?",
+    args: [bid.url],
+  });
+
+  if (existing.rows.length > 0) {
+    const current = Number(existing.rows[0].amount_in_usd);
     await db.execute({
       sql: `UPDATE metadata
             SET amount_in_usd = ?, title = ?, description = ?, category = ?
             WHERE id = ?`,
-      args: [amount, title, description || null, input.category, existing.rows[0].id!],
+      args: [
+        Math.max(current, bid.amount),
+        bid.title,
+        bid.description,
+        bid.category,
+        existing.rows[0].id!,
+      ],
     });
   } else {
     await db.execute({
       sql: `INSERT INTO metadata (url, title, description, category, amount_in_usd)
             VALUES (?, ?, ?, ?, ?)`,
-      args: [video.url, title, description || null, input.category, amount],
+      args: [bid.url, bid.title, bid.description, bid.category, bid.amount],
     });
   }
 
@@ -234,10 +279,10 @@ export async function createEntry(input: CreateInput): Promise<CreateResult> {
 
   const saved = await db.execute({
     sql: "SELECT * FROM metadata WHERE url = ?",
-    args: [video.url],
+    args: [bid.url],
   });
 
-  return { ok: true, entry: toEntry(saved.rows[0]) };
+  return toEntry(saved.rows[0]);
 }
 
 /**

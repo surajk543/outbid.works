@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
 import { MAX_BID, MIN_BID, priceOfFirst } from "@/lib/bidding";
@@ -17,8 +16,6 @@ export function BidForm({
   /** Every bid currently on the board, so the modal can show the rank. */
   amounts: number[];
 }) {
-  const router = useRouter();
-
   // Opening at the price of #1 makes the pitch concrete: this is exactly what
   // the top spot costs right now.
   const [amount, setAmount] = useState(priceOfFirst(topBid));
@@ -27,7 +24,6 @@ export function BidForm({
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [error, setError] = useState<FieldError>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
   // The Terms require an explicit tick before a bid is placed, so confirming
@@ -45,7 +41,6 @@ export function BidForm({
     event.preventDefault();
     if (!complete) return;
     setError(null);
-    setSuccess(null);
     setAgreed(false);
     dialog.current?.showModal();
   }
@@ -60,10 +55,9 @@ export function BidForm({
 
     setPending(true);
     setError(null);
-    setSuccess(null);
 
     try {
-      const response = await fetch("/api/entries", {
+      const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -78,18 +72,17 @@ export function BidForm({
       const data = await response.json();
 
       if (!response.ok) {
+        closeConfirm();
         setError({ field: data.field ?? "url", message: data.error });
         return;
       }
 
-      setSuccess(`"${data.entry.title}" is live at #${data.entry.rank}.`);
-      setUrl("");
-      setTitle("");
-      setDescription("");
-      setCategory("");
-      closeConfirm();
-      router.refresh();
+      // Leaving for Dodo's hosted checkout. The listing is written when the
+      // payment confirms, so nothing is reset here — a cancelled payment
+      // should come back to a form that still has the bid in it.
+      window.location.href = data.checkout_url;
     } catch {
+      closeConfirm();
       setError({ field: "url", message: "Could not reach the server. Try again." });
     } finally {
       setPending(false);
@@ -192,7 +185,7 @@ export function BidForm({
             aria-describedby={!complete ? "bid-incomplete" : undefined}
             className="h-13 flex-1 rounded-full bg-accent px-8 text-lg font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
           >
-            {pending ? "Placing bid…" : `Outbid for $${amount}`}
+            {pending ? "Starting checkout…" : `Outbid for $${amount}`}
           </button>
         </div>
 
@@ -205,12 +198,6 @@ export function BidForm({
         {error ? (
           <p className="mt-4 text-center font-medium text-accent" role="alert">
             {error.message}
-          </p>
-        ) : null}
-
-        {success ? (
-          <p className="mt-4 text-center font-medium text-success" role="status">
-            {success} Checkout is not wired up yet — no payment was taken.
           </p>
         ) : null}
       </div>
@@ -336,8 +323,8 @@ function ConfirmDialog({
         </p>
 
         <p className="mt-2 text-sm text-muted">
-          Checkout is not built yet, so nothing is charged — the listing goes
-          live immediately.
+          Payment is taken by Dodo Payments on the next screen. The listing
+          goes on the board once the payment confirms.
         </p>
 
         <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border border-border p-3">
@@ -385,7 +372,7 @@ function ConfirmDialog({
           disabled={!agreed || pending}
           className="rounded-full bg-accent px-6 py-2.5 font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
         >
-          {pending ? "Placing bid…" : "Continue"}
+          {pending ? "Starting checkout…" : "Continue to checkout"}
         </button>
       </div>
     </dialog>
