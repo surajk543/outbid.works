@@ -15,11 +15,9 @@ export type Entry = {
   clicks: number;
   rank: number;
   created_at: string;
-  /** Derived from url at read time — not stored columns. */
+  /** Derived from url at read time — not a stored column. */
   provider: VideoProvider;
   thumbnail: string | null;
-  /** Player URL for inline playback, null when the provider cannot embed. */
-  embed: string | null;
 };
 
 function toEntry(row: Row): Entry {
@@ -38,7 +36,6 @@ function toEntry(row: Row): Entry {
     created_at: String(row.created_at),
     provider: parsed?.provider ?? "file",
     thumbnail: parsed?.thumbnail ?? null,
-    embed: parsed?.embed ?? null,
   };
 }
 
