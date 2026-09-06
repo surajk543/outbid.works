@@ -241,6 +241,21 @@ export async function createEntry(input: CreateInput): Promise<CreateResult> {
 }
 
 /**
+ * Where a listing points, without counting anything. Used for a visitor who
+ * has already been counted for this listing.
+ */
+export async function getEntryUrl(id: number): Promise<string | null> {
+  await ready();
+
+  const result = await db.execute({
+    sql: "SELECT url FROM metadata WHERE id = ?",
+    args: [id],
+  });
+
+  return result.rows.length > 0 ? String(result.rows[0].url) : null;
+}
+
+/**
  * Counts a click and hands back where to send the visitor. Returns null for an
  * unknown id so the route can 404 instead of redirecting nowhere.
  */

@@ -16,10 +16,10 @@ export default function Page() {
         <h2 className="font-bold text-accent">Draft — review before publishing</h2>
         <p className="mt-2 text-sm leading-relaxed">
           This describes what the code actually does today, which is very
-          little: no cookies, no analytics, no accounts, no payments. Every
-          highlighted blank still needs filling, and a lawyer in the governing
-          jurisdiction should review it. Adding checkout, analytics, or emails
-          later means rewriting this page.
+          little: one functional cookie, no analytics, no accounts, no payments.
+          Every highlighted blank still needs filling, and a lawyer in the
+          governing jurisdiction should review it. Adding checkout, analytics,
+          or emails later means rewriting this page.
         </p>
       </div>
 
@@ -61,8 +61,9 @@ export default function Page() {
 
       <LegalSection title="What we collect">
         <p>
-          The Service is deliberately small. There are no accounts, no login,
-          and no tracking cookies.
+          The Service is deliberately small. There are no accounts and no
+          login, and the single cookie it sets is functional rather than a
+          tracker.
         </p>
         <LegalList>
           <LegalItem>
@@ -75,6 +76,15 @@ export default function Page() {
             increase a counter on that listing by one. We do not store who
             clicked, when, from where, or from what device. The counter is a
             single number with nothing attached to it.
+          </LegalItem>
+          <LegalItem>
+            <strong>A cookie recording which listings you have opened.</strong>{" "}
+            So that opening the same listing twice is not counted twice, your
+            browser stores a cookie named <code>outbid_seen</code> holding the
+            listing numbers you have already been counted for. It lasts a year,
+            contains no identifier for you, and is never sent anywhere except
+            back to this site. Clearing it simply means your next click counts
+            again.
           </LegalItem>
           <LegalItem>
             <strong>Theme preference.</strong> Light or dark is saved in your
@@ -102,7 +112,9 @@ export default function Page() {
         </p>
         <LegalList>
           <LegalItem>
-            We set no cookies at all — none, not even a visitor ID.
+            The only cookie is the click record described above. There is no
+            advertising cookie and no visitor ID that follows you between
+            listings or sites.
           </LegalItem>
           <LegalItem>
             There is no analytics product on the site, no pixel, and no
