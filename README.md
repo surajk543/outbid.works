@@ -129,6 +129,30 @@ and no bid can be placed. Webhook signatures are verified per the Standard
 Webhooks spec, with a five-minute timestamp window so a captured request cannot
 be replayed.
 
+A key is bound to one mode: a test key gets 401 from `live.dodopayments.com`
+and vice versa, so the product, the webhook and its secret all have to be
+created twice — once per mode.
+
+The customer may pay in their own currency (Dodo converts at checkout), but the
+board records the USD figure carried in `metadata`, so a rank never depends on
+the payer's currency.
+
+### Trying it without real money
+
+```bash
+DODO_MODE=test \
+DODO_API_KEY=<test key> \
+DODO_PRODUCT_ID=<test pay-what-you-want product> \
+DODO_WEBHOOK_SECRET=<test webhook secret> \
+npm run dev
+```
+
+Placing a bid then redirects to Dodo's hosted test checkout. To exercise
+fulfilment without paying, POST a signed `payment.succeeded` at
+`/api/webhooks/dodo`: sign `"<id>.<timestamp>.<body>"` with HMAC-SHA256 using
+the base64-decoded secret, and send it as `webhook-signature: v1,<base64>`
+alongside `webhook-id` and `webhook-timestamp`.
+
 ## Scripts
 
 | Command | What it does |
