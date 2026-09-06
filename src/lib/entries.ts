@@ -70,6 +70,20 @@ export async function listEntries(
   return result.rows.map(toEntry);
 }
 
+/**
+ * Just the amounts column, so the bid form can work out which rank a given
+ * bid would take without shipping the whole board to the client.
+ */
+export async function getBidAmounts(): Promise<number[]> {
+  await ready();
+
+  const result = await db.execute(
+    `SELECT amount_in_usd FROM metadata ORDER BY amount_in_usd DESC`,
+  );
+
+  return result.rows.map((row) => Number(row.amount_in_usd));
+}
+
 export type Stats = {
   entries: number;
   totalUsd: number;

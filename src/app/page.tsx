@@ -3,15 +3,16 @@ import Link from "next/link";
 import { BidForm } from "@/components/bid-form";
 import { VideoBoard } from "@/components/video-board";
 import { MIN_BID, priceOfFirst } from "@/lib/bidding";
-import { getStats, listEntries } from "@/lib/entries";
+import { getBidAmounts, getStats, listEntries } from "@/lib/entries";
 
 // The board changes the moment somebody bids, so nothing here is prerendered.
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
-  const [stats, entries] = await Promise.all([
+  const [stats, entries, amounts] = await Promise.all([
     getStats(),
     listEntries({ limit: 12 }),
+    getBidAmounts(),
   ]);
 
   const nextTopBid = priceOfFirst(stats.topBid);
@@ -52,7 +53,7 @@ export default async function Page() {
         </p>
       </section>
 
-      <BidForm topBid={stats.topBid} />
+      <BidForm topBid={stats.topBid} amounts={amounts} />
 
       <div className="mt-20">
         <VideoBoard entries={entries} heading="Trending right now" />

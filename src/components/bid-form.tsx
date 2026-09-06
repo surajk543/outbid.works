@@ -2,14 +2,21 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { MAX_BID, MIN_BID, priceOfFirst } from "@/lib/bidding";
-import { categories } from "@/lib/categories";
+import { categories, categoryLabel } from "@/lib/categories";
 
 type FieldError = { field: string; message: string } | null;
 
-export function BidForm({ topBid }: { topBid: number }) {
+export function BidForm({
+  topBid,
+  amounts,
+}: {
+  topBid: number;
+  /** Every bid currently on the board, so the modal can show the rank. */
+  amounts: number[];
+}) {
   const router = useRouter();
 
   // Opening at the price of #1 makes the pitch concrete: this is exactly what
@@ -23,26 +30,32 @@ export function BidForm({ topBid }: { topBid: number }) {
   const [success, setSuccess] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
-  // The Terms require an explicit tick before a bid is placed, so the form has
-  // a second step rather than one button that does everything.
-  const [confirming, setConfirming] = useState(false);
+  // The Terms require an explicit tick before a bid is placed, so confirming
+  // happens in a dialog rather than inline under the button.
   const [agreed, setAgreed] = useState(false);
+  const dialog = useRef<HTMLDialogElement>(null);
 
-  const complete =
-    url.trim() !== "" && title.trim() !== "" && category !== "";
+  const complete = url.trim() !== "" && title.trim() !== "" && category !== "";
 
-  async function submit(event: React.FormEvent) {
+  // Matches the server's ranking: equal amounts keep placement order, and a new
+  // listing is always the newest, so an existing tie stays ahead of it.
+  const projectedRank = amounts.filter((a) => a >= amount).length + 1;
+
+  function openConfirm(event: React.FormEvent) {
     event.preventDefault();
+    if (!complete) return;
+    setError(null);
+    setSuccess(null);
+    setAgreed(false);
+    dialog.current?.showModal();
+  }
 
-    // First press moves to the consent step; only the second one bids.
-    if (!confirming) {
-      if (!complete) return;
-      setError(null);
-      setSuccess(null);
-      setConfirming(true);
-      return;
-    }
+  function closeConfirm() {
+    dialog.current?.close();
+    setAgreed(false);
+  }
 
+  async function placeBid() {
     if (!agreed) return;
 
     setPending(true);
@@ -74,8 +87,7 @@ export function BidForm({ topBid }: { topBid: number }) {
       setTitle("");
       setDescription("");
       setCategory("");
-      setConfirming(false);
-      setAgreed(false);
+      closeConfirm();
       router.refresh();
     } catch {
       setError({ field: "url", message: "Could not reach the server. Try again." });
@@ -87,7 +99,7 @@ export function BidForm({ topBid }: { topBid: number }) {
   const invalid = (field: string) => error?.field === field;
 
   return (
-    <form onSubmit={submit} className="mx-auto mt-10 max-w-3xl">
+    <form onSubmit={openConfirm} className="mx-auto mt-10 max-w-3xl">
       <div className="rounded-3xl border border-border bg-card p-5 shadow-sm sm:p-6">
         <div className="space-y-4">
           <Field
@@ -176,15 +188,11 @@ export function BidForm({ topBid }: { topBid: number }) {
 
           <button
             type="submit"
-            disabled={!complete || (confirming && !agreed) || pending}
+            disabled={!complete || pending}
             aria-describedby={!complete ? "bid-incomplete" : undefined}
             className="h-13 flex-1 rounded-full bg-accent px-8 text-lg font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
           >
-            {pending
-              ? "Placing bid…"
-              : confirming
-                ? `Confirm bid of $${amount}`
-                : `Outbid for $${amount}`}
+            {pending ? "Placing bid…" : `Outbid for $${amount}`}
           </button>
         </div>
 
@@ -192,41 +200,6 @@ export function BidForm({ topBid }: { topBid: number }) {
           <p id="bid-incomplete" className="mt-3 text-center text-sm text-muted">
             Add a video link, a title, and a category to place a bid.
           </p>
-        ) : null}
-
-        {confirming ? (
-          <div className="mt-4 rounded-2xl border border-accent bg-accent-soft p-4">
-            <label className="flex cursor-pointer items-start gap-3">
-              <input
-                type="checkbox"
-                checked={agreed}
-                onChange={(e) => setAgreed(e.target.checked)}
-                className="mt-0.5 size-5 shrink-0 accent-accent"
-              />
-              <span className="leading-relaxed">
-                I have read and agree to the{" "}
-                <Link
-                  href="/terms"
-                  target="_blank"
-                  className="font-semibold text-accent underline underline-offset-4"
-                >
-                  Terms of Service
-                </Link>{" "}
-                of outbid.works
-              </span>
-            </label>
-
-            <button
-              type="button"
-              onClick={() => {
-                setConfirming(false);
-                setAgreed(false);
-              }}
-              className="mt-3 text-sm font-medium text-muted underline underline-offset-4 transition-colors hover:text-foreground"
-            >
-              Back to editing
-            </button>
-          </div>
         ) : null}
 
         {error ? (
@@ -245,7 +218,177 @@ export function BidForm({ topBid }: { topBid: number }) {
       <p className="mt-4 text-center text-sm text-muted">
         Already on the board? Submit the same link with a higher bid to climb.
       </p>
+
+      <ConfirmDialog
+        ref={dialog}
+        rank={projectedRank}
+        amount={amount}
+        category={category}
+        title={title}
+        agreed={agreed}
+        onAgreedChange={setAgreed}
+        pending={pending}
+        onCancel={closeConfirm}
+        onConfirm={placeBid}
+      />
     </form>
+  );
+}
+
+function ConfirmDialog({
+  ref,
+  rank,
+  amount,
+  category,
+  title,
+  agreed,
+  onAgreedChange,
+  pending,
+  onCancel,
+  onConfirm,
+}: {
+  ref: React.RefObject<HTMLDialogElement | null>;
+  rank: number;
+  amount: number;
+  category: string;
+  title: string;
+  agreed: boolean;
+  onAgreedChange: (value: boolean) => void;
+  pending: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <dialog
+      ref={ref}
+      // Esc fires cancel; route it through the same reset as the buttons.
+      onCancel={(e) => {
+        e.preventDefault();
+        onCancel();
+      }}
+      onClick={(e) => {
+        // The backdrop is the dialog element itself, so a click landing on it
+        // rather than on the panel means the user clicked outside.
+        if (e.target === ref.current) onCancel();
+      }}
+      // m-auto restores the centring that Tailwind's preflight strips off the
+      // dialog's UA margin.
+      className="m-auto w-[min(30rem,calc(100vw-2rem))] rounded-2xl border border-border bg-card p-0 text-foreground shadow-2xl backdrop:bg-black/50 backdrop:backdrop-blur-sm"
+      aria-labelledby="confirm-title"
+    >
+      <div className="p-6">
+        <div className="flex items-start justify-between gap-4">
+          <h2 id="confirm-title" className="text-xl font-bold tracking-tight">
+            Confirm this rank
+          </h2>
+          <button
+            type="button"
+            onClick={onCancel}
+            aria-label="Close"
+            className="-mr-1 -mt-1 flex size-8 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-chip hover:text-foreground"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              aria-hidden="true"
+            >
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <p className="mt-2 text-muted">
+          Check the rank and price, then agree to the Terms of Service to
+          continue.
+        </p>
+
+        <div className="mt-5 flex items-start justify-between gap-4 rounded-xl bg-chip p-4">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+              Rank
+            </p>
+            <p className="mt-0.5 font-mono text-3xl font-bold tabular-nums">
+              #{rank}
+            </p>
+            <p className="mt-1 truncate text-sm text-muted">
+              {category ? categoryLabel(category) : "—"}
+            </p>
+          </div>
+          <div className="shrink-0 text-right">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+              Price
+            </p>
+            <p className="mt-0.5 font-mono text-3xl font-bold tabular-nums text-accent">
+              ${amount.toLocaleString()}
+            </p>
+            <p className="mt-1 text-sm text-muted">Due now</p>
+          </div>
+        </div>
+
+        <p className="mt-4 leading-relaxed">
+          <span className="font-semibold">{title || "Your video"}</span> goes on
+          the public board at that rank. Someone else can pay more and take it.
+        </p>
+
+        <p className="mt-2 text-sm text-muted">
+          Checkout is not built yet, so nothing is charged — the listing goes
+          live immediately.
+        </p>
+
+        <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border border-border p-3">
+          <input
+            type="checkbox"
+            checked={agreed}
+            onChange={(e) => onAgreedChange(e.target.checked)}
+            className="mt-0.5 size-5 shrink-0 accent-accent"
+          />
+          <span className="leading-relaxed">
+            I have read and agree to the{" "}
+            <Link
+              href="/terms"
+              target="_blank"
+              className="font-semibold text-accent underline underline-offset-4"
+            >
+              Terms of Service
+            </Link>{" "}
+            of outbid.works
+          </span>
+        </label>
+
+        <p className="mt-3 text-sm text-muted">
+          <Link href="/privacy" target="_blank" className="underline underline-offset-4 hover:text-foreground">
+            Privacy
+          </Link>
+          {" · "}
+          <Link href="/rules" target="_blank" className="underline underline-offset-4 hover:text-foreground">
+            Rules
+          </Link>
+        </p>
+      </div>
+
+      <div className="flex justify-end gap-3 border-t border-border bg-background/60 px-6 py-4">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="rounded-full border border-border bg-card px-5 py-2.5 font-semibold transition-colors hover:bg-chip"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          onClick={onConfirm}
+          disabled={!agreed || pending}
+          className="rounded-full bg-accent px-6 py-2.5 font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+        >
+          {pending ? "Placing bid…" : "Continue"}
+        </button>
+      </div>
+    </dialog>
   );
 }
 
