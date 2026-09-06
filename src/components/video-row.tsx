@@ -33,7 +33,28 @@ const PODIUM: Record<number, { badge: string; row: string; rule: string }> = {
 };
 
 function iconFor(categoryId: string) {
-  return categories.find((c) => c.id === categoryId)?.icon ?? "film";
+  return categories.find((c) => c.id === categoryId)?.icon ?? "dots";
+}
+
+/** Takes its colour from the badge, so one shape serves gold, silver and bronze. */
+function TrophyIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M7 4h10v5a5 5 0 0 1-10 0V4Z" />
+      <path d="M17 5h2.6a2.4 2.4 0 0 1 0 4.8H17M7 5H4.4a2.4 2.4 0 0 0 0 4.8H7" />
+      <path d="M12 14v3.5M8.5 20h7" />
+    </svg>
+  );
 }
 
 export function VideoRow({ entry }: { entry: Entry }) {
@@ -56,7 +77,15 @@ export function VideoRow({ entry }: { entry: Entry }) {
             podium ? podium.badge : "bg-chip text-muted"
           }`}
         >
-          {entry.rank}
+          {podium ? (
+            <>
+              <TrophyIcon />
+              {/* The trophy carries the rank visually; keep it readable aloud. */}
+              <span className="sr-only">Rank {entry.rank}</span>
+            </>
+          ) : (
+            entry.rank
+          )}
         </span>
 
         <span className="relative hidden aspect-video w-24 shrink-0 overflow-hidden rounded-lg bg-chip sm:block lg:w-32">

@@ -40,6 +40,13 @@ const ICONS: Record<Category["icon"], React.ReactNode> = {
     </>
   ),
   dumbbell: <path d="M6.5 6.5v11M3 9v6M17.5 6.5v11M21 9v6M6.5 12h11" />,
+  dots: (
+    <>
+      <circle cx="5" cy="12" r="1.4" />
+      <circle cx="12" cy="12" r="1.4" />
+      <circle cx="19" cy="12" r="1.4" />
+    </>
+  ),
 };
 
 export function CategoryIcon({ name }: { name: Category["icon"] }) {

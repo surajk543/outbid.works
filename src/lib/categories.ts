@@ -2,7 +2,16 @@ export type Category = {
   id: string;
   label: string;
   /** Key into ICONS in components/category-icon.tsx */
-  icon: "gamepad" | "music" | "code" | "smile" | "book" | "film" | "camera" | "dumbbell";
+  icon:
+    | "gamepad"
+    | "music"
+    | "code"
+    | "smile"
+    | "book"
+    | "film"
+    | "camera"
+    | "dumbbell"
+    | "dots";
 };
 
 export const categories: Category[] = [
@@ -14,6 +23,8 @@ export const categories: Category[] = [
   { id: "film", label: "Film", icon: "film" },
   { id: "vlog", label: "Vlog", icon: "camera" },
   { id: "fitness", label: "Fitness", icon: "dumbbell" },
+  // Last on purpose: the fallback for anything the list above does not cover.
+  { id: "other", label: "Other", icon: "dots" },
 ];
 
 export const categoryIds = categories.map((c) => c.id);
