@@ -22,3 +22,22 @@ export async function GET(
 
   return NextResponse.redirect(url, 302);
 }
+
+/**
+ * Same count, no redirect. Playing a listing inline is attention the bid
+ * bought just as much as leaving for the source is, and the schema has one
+ * counter, so both land in `clicks`.
+ */
+export async function POST(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+  const url = await recordClick(Number(id));
+
+  if (!url) {
+    return NextResponse.json({ error: "No such entry." }, { status: 404 });
+  }
+
+  return NextResponse.json({ counted: true });
+}

@@ -15,6 +15,8 @@ export function VideoBoard({
   heading?: string;
 }) {
   const [filter, setFilter] = useState<string | null>(null);
+  // One player at a time, so opening a video stops whatever else was running.
+  const [playingId, setPlayingId] = useState<number | null>(null);
 
   // Only offer a chip for a category somebody has actually bid in, so the
   // filter row never leads to an empty board.
@@ -69,7 +71,13 @@ export function VideoBoard({
 
       <ol className="overflow-hidden rounded-2xl border border-border bg-card">
         {visible.map((entry) => (
-          <VideoRow key={entry.id} entry={entry} />
+          <VideoRow
+            key={entry.id}
+            entry={entry}
+            playing={playingId === entry.id}
+            onPlay={() => setPlayingId(entry.id)}
+            onClose={() => setPlayingId(null)}
+          />
         ))}
       </ol>
     </section>
