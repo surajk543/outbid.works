@@ -1,5 +1,6 @@
 import { CategoryIcon } from "@/components/category-icon";
 import { PageShell } from "@/components/page-shell";
+import { MIN_BID } from "@/lib/bidding";
 import { categories } from "@/lib/categories";
 import { listEntries, type Entry } from "@/lib/entries";
 
@@ -60,7 +61,7 @@ export default async function Page() {
                 </a>
               ) : (
                 <p className="mt-4 rounded-xl border border-dashed border-border px-4 py-3 text-sm text-muted">
-                  Open — $5 takes the top spot.
+                  Open — ${MIN_BID} takes the top spot.
                 </p>
               )}
             </section>

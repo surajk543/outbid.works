@@ -4,7 +4,7 @@ A video leaderboard ranked by one number: what you paid to be on it.
 
 New creators lose to recommendation algorithms because they have none of the
 signals those algorithms rank on — watch time, subscribers, a back catalogue.
-This replaces all of it with a bid. $5 puts you on the board; the highest bid
+This replaces all of it with a bid. $1 puts you on the board; the highest bid
 is #1. Every card shows its click-through count, so a creator can see what the
 money actually bought.
 
@@ -40,7 +40,7 @@ One table, `metadata`:
 | `title` | TEXT | required, ≤120 chars |
 | `description` | TEXT | optional, ≤280 chars |
 | `category` | TEXT | one of the ids in `src/lib/categories.ts` |
-| `amount_in_usd` | REAL | the bid: whole dollars, $10–$999,999 |
+| `amount_in_usd` | REAL | the bid: whole dollars, $1–$999,999 |
 | `clicks` | INTEGER | incremented by `/go/[id]` |
 | `rank` | INTEGER | recomputed on every bid |
 | `created_at` | TEXT | `datetime('now')` |
@@ -51,11 +51,10 @@ One table, `metadata`:
 
 Enforced in `src/lib/bidding.ts` and checked server-side on every bid:
 
-- Whole US dollars, $10 minimum, $999,999 maximum.
-- Taking #1 costs at least $5 more than the current #1. Bidding above the
-  leader but under that step is rejected, so the top spot cannot be sniped a
-  dollar at a time. Bidding at or below the leader is fine — it just lands
-  lower.
+- Whole US dollars, $1 minimum, $999,999 maximum.
+- Taking #1 costs at least $1 more than the current #1. Bidding at or below the
+  leader is fine — it just lands lower down the board. `OUTBID_STEP` sets that
+  gap; raising it above $1 stops the top spot being taken a dollar at a time.
 - Equal amounts keep placement order: the older listing holds the higher rank.
 - Raising a listing you already hold costs at least $1 more than its current
   amount.

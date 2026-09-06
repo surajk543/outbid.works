@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { PageShell } from "@/components/page-shell";
+import { MIN_BID } from "@/lib/bidding";
 
 export const metadata = { title: "About · outbid.works" };
 
@@ -20,8 +21,9 @@ export default function Page() {
         </p>
 
         <p>
-          outbid.works replaces all of that with one number. Bid $5 and you are
-          on the board. Bid more than everyone else and you are #1. No history,
+          outbid.works replaces all of that with one number. Bid ${MIN_BID} and
+          you are on the board. Bid more than everyone else and you are #1. No
+          history,
           no follower count, no cold start. The ranking is legible to everyone
           looking at it, which is the part algorithms never manage.
         </p>

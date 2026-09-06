@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
+import { MIN_BID } from "@/lib/bidding";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,7 +18,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "outbid.works — buy your way onto the leaderboard",
   description:
-    "A video leaderboard ranked by one number: what you paid to be on it. New creators bid from $5 to get their work in front of people.",
+    `A video leaderboard ranked by one number: what you paid to be on it. New creators bid from $${MIN_BID} to get their work in front of people.`,
 };
 
 // Applies the stored theme before first paint so the page doesn't flash.
