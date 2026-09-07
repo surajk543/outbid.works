@@ -24,18 +24,6 @@ export default async function Page() {
         </div>
       ) : null}
 
-      <div className="rounded-2xl border border-accent bg-accent-soft p-5">
-        <h2 className="font-bold text-accent">Draft — review before publishing</h2>
-        <p className="mt-2 text-sm leading-relaxed">
-          This describes what the code actually does today, which is very
-          little: one functional cookie, no analytics and no accounts. Payment is
-          handled entirely by Dodo Payments.
-          Every highlighted blank still needs filling, and a lawyer in the
-          governing jurisdiction should review it. Adding analytics or email
-          later means rewriting this page.
-        </p>
-      </div>
-
       <p className="mt-8 text-muted">
         Effective <Blank>effective date</Blank>. Last updated{" "}
         <Blank>last updated date</Blank>.
@@ -45,7 +33,7 @@ export default async function Page() {
         <p>
           The controller for personal data processed through the Service is{" "}
           <Blank>legal name of operator</Blank>,{" "}
-          <Blank>legal form</Blank>, based in <Blank>country</Blank>. The
+          <Blank>legal form</Blank>, based in India. The
           Service is provided from {SITE_URL}.
         </p>
         <LegalList>
@@ -200,12 +188,6 @@ export default async function Page() {
       <LegalSection title="Who we share data with">
         <LegalList>
           <LegalItem>
-            <strong>Hosting and database providers</strong> — currently{" "}
-            <Blank>hosting provider</Blank> and{" "}
-            <Blank>database provider</Blank> — so the site can run and the board
-            can be stored.
-          </LegalItem>
-          <LegalItem>
             <strong>Dodo Payments</strong> — our merchant of record, who take
             the payment and hold the card and billing details.
           </LegalItem>
@@ -218,9 +200,7 @@ export default async function Page() {
         <p>
           We do not sell personal data. Some providers may be outside the
           European Economic Area; where that applies we rely on the safeguards
-          those providers offer, such as standard contractual clauses.{" "}
-          <Blank>Confirm which transfer mechanism your providers actually
-          use.</Blank>
+          those providers offer, such as standard contractual clauses.
         </p>
       </LegalSection>
 

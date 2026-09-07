@@ -56,7 +56,7 @@ export default async function Page() {
         <p>
           The Service is operated by <Blank>legal name of operator</Blank>,{" "}
           <Blank>legal form — e.g. sole proprietor / private limited company
-          </Blank>, based in <Blank>country</Blank> (&ldquo;we&rdquo;,
+          </Blank>, based in India (&ldquo;we&rdquo;,
           &ldquo;us&rdquo;, &ldquo;our&rdquo;). The Service is provided from{" "}
           {SITE_URL}. Required provider details are at{" "}
           <Blank>link to imprint or company details page, if your jurisdiction
@@ -124,7 +124,7 @@ export default async function Page() {
           </LegalItem>
           <LegalItem>
             You may not use the Service if you are prohibited from receiving
-            services under the laws of <Blank>governing jurisdiction</Blank> or
+            services under the laws of India or
             another applicable jurisdiction, including trade sanctions.
           </LegalItem>
         </LegalList>
@@ -265,9 +265,7 @@ export default async function Page() {
           We use third-party names and marks solely to identify the video or
           platform being listed. That is not an affiliation with, sponsorship
           by, or endorsement from the rights holder unless the lister is that
-          rights holder. <Blank>Confirm with counsel that this framing works in
-          your jurisdiction — nominative fair use is a US doctrine and has no
-          exact equivalent everywhere.</Blank>
+          rights holder.
         </p>
         <p>
           outbid.works, our wordmark, and the look of the Service are ours. You
@@ -393,11 +391,10 @@ export default async function Page() {
 
       <LegalSection title="Governing law">
         <p>
-          These Terms are governed by the laws of{" "}
-          <Blank>governing jurisdiction</Blank>, excluding conflict-of-law
-          rules. If you are a consumer with a mandatory local law that cannot be
-          displaced, that law still protects you. If you are not a consumer, the
-          courts at <Blank>venue — e.g. our place of business</Blank> have
+          These Terms are governed by the laws of India, excluding
+          conflict-of-law rules. If you are a consumer with a mandatory local
+          law that cannot be displaced, that law still protects you. If you are
+          not a consumer, the courts at <Blank>city</Blank>, India have
           exclusive jurisdiction, to the extent permitted.
         </p>
       </LegalSection>
