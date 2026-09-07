@@ -4,7 +4,16 @@ import { Blank, LegalItem, LegalList, LegalSection } from "@/components/legal";
 import { PageShell } from "@/components/page-shell";
 import { getTranslations } from "@/lib/i18n";
 import { MIN_BID, OUTBID_STEP } from "@/lib/bidding";
-import { CONTACT_EMAIL, CONTACT_X, CONTACT_X_URL, SITE_URL } from "@/lib/contact";
+import {
+  CONTACT_EMAIL,
+  CONTACT_X,
+  CONTACT_X_URL,
+  EFFECTIVE_DATE,
+  LAST_UPDATED,
+  OPERATOR_FORM,
+  OPERATOR_NAME,
+  SITE_URL,
+} from "@/lib/contact";
 
 export const metadata = { title: "Terms of Service · outbid.works" };
 
@@ -36,8 +45,7 @@ export default async function Page() {
       </div>
 
       <p className="mt-8 text-muted">
-        Effective <Blank>effective date</Blank>. Last updated{" "}
-        <Blank>last updated date</Blank>.
+        Effective {EFFECTIVE_DATE}. Last updated {LAST_UPDATED}.
       </p>
 
       <p className="mt-4 leading-relaxed">
@@ -54,9 +62,8 @@ export default async function Page() {
 
       <LegalSection title="Operator and contact">
         <p>
-          The Service is operated by <Blank>legal name of operator</Blank>,{" "}
-          <Blank>legal form — e.g. sole proprietor / private limited company
-          </Blank>, based in India (&ldquo;we&rdquo;,
+          The Service is operated by {OPERATOR_NAME}, {OPERATOR_FORM}, based
+          in India (&ldquo;we&rdquo;,
           &ldquo;us&rdquo;, &ldquo;our&rdquo;). The Service is provided from{" "}
           {SITE_URL}. Required provider details are at{" "}
           <Blank>link to imprint or company details page, if your jurisdiction
@@ -313,13 +320,13 @@ export default async function Page() {
         </p>
       </LegalSection>
 
-      <LegalSection title="No endorsement, no results claims">
+      <LegalSection title="No endorsement, no earnings claims">
         <p>
           Appearance on the board is not our opinion of a video. We do not
-          verify that listed creators, claims, or results are true. Click and
-          visitor counts describe what our systems recorded; they are not a
-          promise that you will get the same outcome. Your results depend on
-          your rank, your video, timing, and factors we do not control.
+          verify that listed creators, claims, prices, or results are true.
+          Click and visitor counts describe what our systems recorded; they are
+          not a promise that you will get the same outcome. Your results depend
+          on your rank, your video, timing, and factors we do not control.
         </p>
         <p>
           Links from the Service to listed videos leave outbid.works. Those
@@ -379,8 +386,8 @@ export default async function Page() {
 
       <LegalSection title="Indemnity">
         <p>
-          You will defend, indemnify, and hold harmless{" "}
-          <Blank>legal name of operator</Blank> and people working on the
+          You will defend, indemnify, and hold harmless {OPERATOR_NAME} and
+          people working on the
           Service from claims, damages, losses, and reasonable legal fees
           arising out of your listing, your destination video, your payment or
           chargeback, your breach of these Terms, or your infringement of

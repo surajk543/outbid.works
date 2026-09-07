@@ -3,7 +3,16 @@ import Link from "next/link";
 import { Blank, LegalItem, LegalList, LegalSection } from "@/components/legal";
 import { PageShell } from "@/components/page-shell";
 import { getTranslations } from "@/lib/i18n";
-import { CONTACT_EMAIL, CONTACT_X, CONTACT_X_URL, SITE_URL } from "@/lib/contact";
+import {
+  CONTACT_EMAIL,
+  CONTACT_X,
+  CONTACT_X_URL,
+  EFFECTIVE_DATE,
+  LAST_UPDATED,
+  OPERATOR_FORM,
+  OPERATOR_NAME,
+  SITE_URL,
+} from "@/lib/contact";
 
 export const metadata = { title: "Privacy Policy · outbid.works" };
 
@@ -25,15 +34,13 @@ export default async function Page() {
       ) : null}
 
       <p className="mt-8 text-muted">
-        Effective <Blank>effective date</Blank>. Last updated{" "}
-        <Blank>last updated date</Blank>.
+        Effective {EFFECTIVE_DATE}. Last updated {LAST_UPDATED}.
       </p>
 
       <LegalSection title="Who is responsible">
         <p>
           The controller for personal data processed through the Service is{" "}
-          <Blank>legal name of operator</Blank>,{" "}
-          <Blank>legal form</Blank>, based in India. The
+          {OPERATOR_NAME}, {OPERATOR_FORM}, based in India. The
           Service is provided from {SITE_URL}.
         </p>
         <LegalList>
