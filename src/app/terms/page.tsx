@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Blank, LegalItem, LegalList, LegalSection } from "@/components/legal";
+import { LegalItem, LegalList, LegalSection } from "@/components/legal";
 import { PageShell } from "@/components/page-shell";
 import { getTranslations } from "@/lib/i18n";
 import { MIN_BID, OUTBID_STEP } from "@/lib/bidding";
@@ -35,12 +35,11 @@ export default async function Page() {
       ) : null}
 
       <div className="rounded-2xl border border-accent bg-accent-soft p-5">
-        <h2 className="font-bold text-accent">Draft — not yet in force</h2>
+        <h2 className="font-bold text-accent">Not reviewed by a lawyer</h2>
         <p className="mt-2 text-sm leading-relaxed">
-          Every highlighted blank below must be filled in before this page is
-          published, and the whole document should be reviewed by a lawyer
-          qualified in the governing jurisdiction. It is a starting structure,
-          not legal advice.
+          These Terms are complete but have not been checked by anyone
+          qualified in Indian law. They are a starting structure, not legal
+          advice.
         </p>
       </div>
 
@@ -65,9 +64,8 @@ export default async function Page() {
           The Service is operated by {OPERATOR_NAME}, {OPERATOR_FORM}, based
           in India (&ldquo;we&rdquo;,
           &ldquo;us&rdquo;, &ldquo;our&rdquo;). The Service is provided from{" "}
-          {SITE_URL}. Required provider details are at{" "}
-          <Blank>link to imprint or company details page, if your jurisdiction
-          requires one</Blank>.
+          {SITE_URL}. The operator details required of an online service are
+          set out in this section.
         </p>
         <LegalList>
           <LegalItem>
@@ -401,8 +399,8 @@ export default async function Page() {
           These Terms are governed by the laws of India, excluding
           conflict-of-law rules. If you are a consumer with a mandatory local
           law that cannot be displaced, that law still protects you. If you are
-          not a consumer, the courts at <Blank>city</Blank>, India have
-          exclusive jurisdiction, to the extent permitted.
+          not a consumer, the courts at Bengaluru, India have exclusive
+          jurisdiction, to the extent permitted.
         </p>
       </LegalSection>
 

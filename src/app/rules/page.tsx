@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { PageShell } from "@/components/page-shell";
 import { MAX_BID, MIN_BID, OUTBID_STEP, RAISE_STEP } from "@/lib/bidding";
+import { CONTACT_X, CONTACT_X_URL, OPERATOR_NAME } from "@/lib/contact";
 import { fill, getTranslations } from "@/lib/i18n";
 
 export const metadata = { title: "Rules · outbid.works" };
@@ -83,6 +84,20 @@ export default async function Page() {
           {t.rules.whyExists}
         </Link>
       </div>
+
+      <p className="mt-10 text-center text-sm text-muted">
+        {t.rules.builtBy}{" "}
+        <a
+          href={CONTACT_X_URL}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="font-medium text-accent underline underline-offset-4"
+        >
+          @{CONTACT_X}
+        </a>
+        {" · "}
+        {t.rules.broughtBy} {OPERATOR_NAME}
+      </p>
     </PageShell>
   );
 }

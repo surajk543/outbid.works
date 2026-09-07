@@ -176,6 +176,8 @@ export const en = {
       "The chat, adult-content, and link-shortener rules above are policy, not code. Only the video-URL check runs automatically.",
     gapLegal:
       "are drafted, but both still have blanks to fill and neither has been reviewed by a lawyer.",
+    builtBy: "Built by",
+    broughtBy: "Brought to you by",
     whyExists: "Why this exists",
   },
   notFound: {

@@ -171,6 +171,8 @@ export const fr: Dictionary = {
       "Les règles ci-dessus sur les messageries, le contenu adulte et les raccourcisseurs relèvent de la politique, pas du code. Seule la vérification de l'URL vidéo est automatique.",
     gapLegal:
       "sont rédigées, mais toutes deux comportent encore des champs à compléter et aucune n'a été relue par un juriste.",
+    builtBy: "Réalisé par",
+    broughtBy: "Proposé par",
     whyExists: "Pourquoi ce site existe",
   },
   notFound: {

@@ -170,6 +170,8 @@ export const vi: Dictionary = {
       "Các quy định phía trên về trò chuyện, nội dung người lớn và liên kết rút gọn là chính sách, không phải mã. Chỉ việc kiểm tra địa chỉ video là tự động.",
     gapLegal:
       "đã soạn thảo, nhưng cả hai vẫn còn chỗ trống cần điền và chưa được luật sư rà soát.",
+    builtBy: "Xây dựng bởi",
+    broughtBy: "Mang đến bởi",
     whyExists: "Vì sao có trang này",
   },
   notFound: {

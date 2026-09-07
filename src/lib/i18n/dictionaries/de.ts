@@ -170,6 +170,8 @@ export const de: Dictionary = {
       "Die obigen Regeln zu Chats, Erwachseneninhalten und URL-Kürzern sind Richtlinie, nicht Code. Automatisch läuft nur die Prüfung der Video-URL.",
     gapLegal:
       "liegen im Entwurf vor, aber in beiden fehlen noch Angaben und keines wurde von einer Anwältin oder einem Anwalt geprüft.",
+    builtBy: "Gebaut von",
+    broughtBy: "Präsentiert von",
     whyExists: "Warum es das gibt",
   },
   notFound: {

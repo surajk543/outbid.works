@@ -170,6 +170,8 @@ export const id: Dictionary = {
       "Aturan di atas soal obrolan, konten dewasa, dan pemendek tautan adalah kebijakan, bukan kode. Yang berjalan otomatis hanya pemeriksaan URL video.",
     gapLegal:
       "sudah disusun, tetapi keduanya masih punya bagian kosong dan belum ditinjau pengacara.",
+    builtBy: "Dibuat oleh",
+    broughtBy: "Dipersembahkan oleh",
     whyExists: "Kenapa ini ada",
   },
   notFound: {

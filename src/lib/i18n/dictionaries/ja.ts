@@ -167,6 +167,8 @@ export const ja: Dictionary = {
       "上記のチャット・アダルト・短縮 URL に関する規定は方針であって、コードによる制御ではありません。自動で行われるのは動画 URL の検証だけです。",
     gapLegal:
       "は草案の段階で、いずれも未記入の箇所が残っており、弁護士の確認も受けていません。",
+    builtBy: "制作",
+    broughtBy: "提供",
     whyExists: "このサイトの目的",
   },
   notFound: {

@@ -170,6 +170,8 @@ export const tr: Dictionary = {
       "Yukarıdaki sohbet, yetişkin içerik ve bağlantı kısaltıcı kuralları politikadır, kod değil. Otomatik çalışan tek şey video adresi denetimidir.",
     gapLegal:
       "taslak hâlindedir; ikisinde de doldurulacak boşluklar var ve hiçbiri bir avukat tarafından incelenmedi.",
+    builtBy: "Yapan",
+    broughtBy: "Sunan",
     whyExists: "Bu neden var",
   },
   notFound: {

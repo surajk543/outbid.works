@@ -171,6 +171,8 @@ export const pt: Dictionary = {
       "As regras acima sobre chats, conteúdo adulto e encurtadores são política, não código. Só a verificação da URL do vídeo é automática.",
     gapLegal:
       "estão redigidos, mas ambos ainda têm campos a preencher e nenhum foi revisado por um advogado.",
+    builtBy: "Feito por",
+    broughtBy: "Trazido por",
     whyExists: "Por que isto existe",
   },
   notFound: {

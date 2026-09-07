@@ -167,6 +167,8 @@ export const ko: Dictionary = {
       "위의 채팅, 성인 콘텐츠, 단축 URL 규정은 정책이지 코드가 아닙니다. 자동으로 실행되는 것은 영상 URL 검사뿐입니다.",
     gapLegal:
       "은(는) 초안 상태이며, 둘 다 채워야 할 항목이 남아 있고 변호사 검토도 받지 않았습니다.",
+    builtBy: "제작",
+    broughtBy: "제공",
     whyExists: "왜 만들었나",
   },
   notFound: {

@@ -158,6 +158,8 @@ export const zh: Dictionary = {
     gapEnforcement:
       "上述关于聊天链接、成人内容和短链接的规则属于政策，而非代码。只有视频链接校验是自动执行的。",
     gapLegal: "均已起草，但两份都还有待填写的空白，且均未经律师审阅。",
+    builtBy: "开发者",
+    broughtBy: "出品",
     whyExists: "为什么做这个",
   },
   notFound: {
